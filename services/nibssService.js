@@ -19,10 +19,13 @@ const getToken = async () => {
 // Verify BVN
 const verifyBVN = async (bvn) => {
   try {
+    console.log("getToken about to be called");
     const token = await getToken();
+    console.log("token received:", token);
     const response = await client.post("/api/validateBvn", { bvn }, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("validateBvn response:", response.data);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || error.message);
@@ -59,10 +62,9 @@ const nameEnquiry = async (accountNumber) => {
 const intraTransfer = async ({ amount, senderAccount, recipientAccount, reference }) => {
   try {
     const token = await getToken();
-    const response = await client.post("/api/transfer/intra", {
-      amount,
-      senderAccount,
-      recipientAccount,
+    const response = await client.post("/api/transfer", {
+      from: senderAccount,
+      to: recipientAccount,
       amount,
     }, {
       headers: { Authorization: `Bearer ${token}` },
